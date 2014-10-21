@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.scrollTo / $.fn.anchorTo</title>
+	<style>
+
+	.hide {
+		display: none;
+	}
+
+	article {
+		display: block;
+		width: 800px;
+		margin: 0 auto;
+	}
+
+	</style>
+</head>
+<body>
+
+	<article>
+		<h1>$.fn.scrollTo / $.fn.anchorTo</h1>
+		<ul class="jump-list"></ul>
+	</article>
+
+	<div class="hide">
+		<section>
+			<h1>Section:</h1>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus similique inventore earum voluptatum repudiandae animi eveniet quisquam sapiente optio, saepe quia, dolorem eligendi nihil. Impedit ea doloremque alias velit minima.
+			</p>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni consequatur doloremque necessitatibus est at temporibus quos veritatis atque non a voluptatum accusamus, perferendis, mollitia similique neque, ullam tenetur nemo nihil.
+			</p>
+		</section>
+	</div>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+	<script>
+
+	$.times(10, function(i){
+		var sec = $(".hide section").eq(0).clone();
+		sec.find("h1").text("Section: " + i);
+		sec.attr("id", "section-" + i).appendTo("article");
+		$(".jump-list").append(
+			$("<li>").append(
+				$("<a>").attr("href", "#section-" + i)
+				.text("Section " + i)
+			)
+		);
+	});
+
+	$(".jump-list a").anchorTo({duration: 100, offset: -16});
+
+	</script>
+
+	
+</body>
+</html>

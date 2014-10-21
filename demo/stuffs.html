@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Stuffs</title>
+</head>
+<body>
+
+	<h1>Stuffs</h1>
+
+	<pre id="log"></pre>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+
+	<script>
+
+	(function(){
+
+		var log = function(msg){
+			$("#log").append(msg + "\n");
+		};
+
+		// random
+		log("> $.random(0, 8)");
+		(function(){
+			var res = [];
+			$.times(16, function(){
+				res.push($.random(0, 8));
+			});
+			log(res.join(","));
+		}());
+		log("");
+
+		// randomFrom
+		log("> $.randomFrom(['foo', 'bar', 'baz'])");
+		(function(){
+			var res = [];
+			var list = ["foo", "bar", "baz"];
+			$.times(16, function(){
+				res.push($.randomFrom(list));
+			});
+			log(res.join(","));
+		}());
+		log("");
+
+		// escapeHTML
+		log("> $.escapeHTML");
+		log($.escapeHTML('<a href="javascript:alert(0)">test</a>'));
+		log("");
+
+		// escapeRegExp
+		log("> $.escapeRegExp('^foo{bar}[baz]+$')");
+		log($.escapeRegExp('^foo{bar}[baz]+$'));
+
+	}());
+
+	</script>
+	
+</body>
+</html>

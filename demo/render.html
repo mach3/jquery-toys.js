@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.render / $.fn.render</title>
+</head>
+<body>
+
+	<article>
+		<h1>$.render / $.fn.render</h1>
+		<section id="profile"></section>
+		<section>
+			<h1>Friends</h1>
+			<ul id="friends"></ul>
+		</section>
+	</article>
+
+	<script type="text/template" id="template-profile">
+		<h1>Profile</h1>
+		<dl>
+			<dt>Name:</dt><dd>{{name}}</dd>
+			<dt>Age:</dt><dd>{{age}}</dd>
+			<dt>Escaped:</dt><dd>{{html}}</dd>
+			<dt>Not Escaped:</dt><dd>{{{html}}}</dd>
+		</dl>
+	</script>
+
+	<script type="text/template" id="template-friends">
+		<li><strong>{{name}}</strong> {{email}}</li>
+	</script>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+
+	<script>
+
+	$("#template-profile")
+	.render({
+		name: "John",
+		age: 18,
+		html: '<a href="javascript:alert(0);">test</a>'
+	})
+	.appendTo("#profile");
+
+	$("#template-friends")
+	.render([
+		{name: "Tom", email: "tom@example.com"},
+		{name: "Bob", email: "bob@example.com"},
+		{name: "Laymond", email: "laymond@example.com"}
+	])
+	.appendTo("#friends");
+
+	</script>
+	
+</body>
+</html>

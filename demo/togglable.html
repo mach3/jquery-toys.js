@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.fn.togglable</title>
+	<style>
+
+	input[type=checkbox], input[type=radio] {
+		position: absolute;
+		opacity: 0;
+		filter: alpha(opacity=0);
+	}
+
+	.inline {
+		display: inline;
+	}
+
+	.inline li {
+		display: inline;
+	}
+
+	.label {
+		display: inline-block;
+		padding: .3em .6em;
+		background-color: #eee;
+		color: #333;
+		border-radius: 3px;
+	}
+
+	.checked + .label {
+		background-color: #333;
+		color: #fff;
+	}
+	:checked + .label {
+		background-color: #333;
+		color: #fff;
+	}
+
+	</style>
+</head>
+<body>
+
+	<article>
+		<h1>$.fn.togglable</h1>
+		<section>
+			<h1>Radio Buttons</h1>
+			<ul class="inline">
+				<li>
+					<input type="radio" name="demo-01" id="demo-01-foo" value="foo">
+					<label class="label" for="demo-01-foo">Foo</label>
+				</li>
+				<li>
+					<input type="radio" name="demo-01" id="demo-01-bar" value="bar">
+					<label class="label" for="demo-01-bar">Bar</label>
+				</li>
+				<li>
+					<input type="radio" name="demo-01" id="demo-01-baz" value="baz">
+					<label class="label" for="demo-01-baz">Baz</label>
+				</li>
+			</ul>
+		</section>
+		<section>
+			<h1>Checkboxes</h1>
+			<ul class="inline">
+				<li>
+					<input type="checkbox" name="demo-02" id="demo-02-foo" value="foo">
+					<label class="label" for="demo-02-foo">Foo</label>
+				</li>
+				<li>
+					<input type="checkbox" name="demo-02" id="demo-02-bar" value="bar">
+					<label class="label" for="demo-02-bar">Bar</label>
+				</li>
+				<li>
+					<input type="checkbox" name="demo-02" id="demo-02-baz" value="baz">
+					<label class="label" for="demo-02-baz">Baz</label>
+				</li>
+			</ul>
+		</section>
+		<section>
+			<h1>Wrapping</h1>
+			<ul class="inline">
+				<li>
+					<label>
+						<input type="radio" name="demo-03" value="foo">
+						<span class="label">Foo</span>
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="radio" name="demo-03" value="bar">
+						<span class="label">Bar</span>
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="radio" name="demo-03" value="baz">
+						<span class="label">Baz</span>
+					</label>
+				</li>
+			</ul>
+		</section>
+	</article>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+	<script>
+
+	$("input[type=radio], input[type=checkbox]").togglable();
+
+	</script>
+	
+</body>
+</html>

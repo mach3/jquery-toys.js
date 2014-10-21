@@ -1,0 +1,23 @@
+{
+  "name": "jquery-toys.js",
+  "version": "0.1.0",
+  "authors": [
+    "mach3 <http://github.com/mach3>"
+  ],
+  "description": "Too trifling extentions for jQuery",
+  "main": "dist/toys.js",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1"
+  }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.fn.swapImage / $.loadImage</title>
+	<style>
+	</style>
+</head>
+<body>
+
+	<h1>$.fn.swapImage / $.loadImage</h1>
+
+	<ul>
+		<li>
+			<img src="https://farm4.staticflickr.com/3866/14371178228_1acf0c20e7_s.jpg" width="75" height="75" alt="" class="swap-image" data-swap="https://farm3.staticflickr.com/2920/14577871493_d6a98c1f08_s.jpg">
+		</li>
+		<li>
+			<img src="https://farm3.staticflickr.com/2938/14556921592_e83fc72500_s.jpg" width="75" height="75" alt="" class="swap-image" data-swap="https://farm4.staticflickr.com/3889/14371095250_23212a645c_s.jpg">
+		</li>
+	</ul>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+
+	<script>
+
+	$(".swap-image").swapImage();
+
+	</script>
+
+
+</body>
+</html>

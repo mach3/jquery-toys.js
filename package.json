@@ -1,0 +1,15 @@
+{
+  "name": "jquery-toys.js",
+  "version": "0.1.0",
+  "description": "Too trifling extentions for jQuery",
+  "main": "dist/toys.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mach3 <http://github.com/mach3>",
+  "license": "MIT",
+  "dependencies": {
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-uglify": "^0.6.0"
+  }
+}

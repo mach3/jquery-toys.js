@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.applyEvents / $.rebase</title>
+</head>
+<body>
+
+	<h1>$.applyEvents / $.rebase</h1>
+	<pre id="result"></pre>
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../src/toys.js"></script>
+
+	<script>
+
+	(function(){
+
+		var log = function(msg){
+			$("#result").append(msg + "\n");
+		};
+
+		var Foo = function(){
+			this.init.apply(this, arguments);
+		};
+
+		(function(){
+			var api = Foo.prototype;
+
+			api.init = function(){
+				var my = this;
+
+				log("> applyEVents");
+
+				$.applyEvents(this);
+				$.each(["on", "off", "trigger"], function(i, name){
+					if($.isFunction(my[name])){
+						log($.format("- %s() is implemented", name));
+					}
+				});
+
+				log("");
+
+				log("> rebase");
+				$.rebase(this, /^on[A-Z]/);
+				this.on("test", this.onTest);
+				this.trigger("test");
+
+			};
+
+			api.onTest = function(){
+				if(this instanceof Foo){
+					log("- `this` in onTest() is instance of Foo");
+				}
+			};
+
+		}());
+
+		new Foo();
+
+	}());
+
+	</script>
+	
+</body>
+</html>

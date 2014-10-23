@@ -1,4 +1,13 @@
-(function($){
+(function($, global){
+
+    /**
+     * Extend Supports
+     * ---------------
+     */
+    $.extend($.support, {
+        scriptAsync: document.createElement("script").async !== void 0,
+        scriptOnLoad: document.createElement("script").onload !== void 0
+    });
 
     /**
      * Extend jQuery
@@ -70,6 +79,54 @@
             return args.length ? args.shift() : "";
         });
         return asObject ? $(str) : str;
+    };
+
+    /**
+     * Include script by url(s), return Deferred object
+     * - pass sync `TRUE` to load synchronously
+     * @param {String|Array} url
+     * @param {Boolean} sync
+     */
+    $.require = function(url, sync){
+        var df, stack, count, process;
+
+        df = $.Deferred();
+        url = ($.type(url) !== "array") ? [url] : url;
+        count = url.length;
+        $._scriptstack_ = $._scriptstack_ || {};
+
+        stack = (function(){
+            var id = (new Date()).getTime();
+            $._scriptstack_[id] = [];
+            return $._scriptstack_[id];
+        }());
+
+        process = function(e){
+            if(e.type === "load" || this.readyState === "loaded"){
+                if(count -= 1){ return; }
+            }
+            !! stack.length && $.each(stack, function(i, node){
+                node.appendTo("head");
+            });
+            df.resolve();
+        };
+
+        $.each(url, function(i, src){
+            var node = $("<script>");
+            node.on($.support.scriptOnLoad ? "load" : "readystatechange", process);
+            if(! sync){
+                node.prop("async", true).appendTo("head");
+            } else {
+                if($.support.scriptAsync){
+                    node.prop("async", false).appendTo("head");
+                } else {
+                    stack.push(node);
+                }
+            }
+            node.attr("src", src);
+        });
+
+        return df.promise();
     };
 
     /**
@@ -221,6 +278,24 @@
     };
 
     /**
+     * Return key-value object from input nodes in form
+     * @returns {Object}
+     */
+    $.fn.serializeObject = function(){
+        var vars = {};
+        $.each(this.serializeArray(), function(i, item){
+            if(vars[item.name] === void 0){
+                return vars[item.name] = item.value;
+            }
+            if($.type(vars[item.name]) !== "array"){
+                vars[item.name] = [vars[item.name]];
+            }
+            vars[item.name].push(item.value);
+        });
+        return vars;
+    };
+
+    /**
      * Swap image source on mouseover
      */
     $.fn.swapImage = function(options){
@@ -268,4 +343,4 @@
         return this;
     };
 
-}(jQuery));
+}(jQuery, this));

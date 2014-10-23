@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>$.serializeObject</title>
+</head>
+<body>
+
+    <article>
+        <h1>$.serializeObject</h1>
+
+        <form action="" id="form-demo">
+            <dl>
+                <dt>Name:</dt>
+                <dd><input type="text" name="name" value="John"></dd>
+                <dt>Email:</dt>
+                <dd><input type="text" name="email" value="john@example.com"></dd>
+                <dt>Gender:</dt>
+                <dd>
+                    <label><input type="radio" name="gender" value="male"><span class="label">male</span></label>
+                    <label><input type="radio" name="gender" value="male"><span class="label">female</span></label>
+                </dd>
+                <dt>Tags:</dt>
+                <dd>
+                    <label><input type="checkbox" name="tag" value="foo"><span class="label">foo</span></label>
+                    <label><input type="checkbox" name="tag" value="foo"><span class="label">foo</span></label>
+                    <label><input type="checkbox" name="tag" value="foo"><span class="label">foo</span></label>
+                </dd>
+            </dl>
+            <input type="submit">
+        </form>
+
+        <pre id="log"></pre>
+    </article>
+
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../src/toys.js"></script>
+
+    <script>
+
+    $("#form-demo").on("submit", function(e){
+        e.preventDefault();
+
+        $("#log").text(JSON.stringify($(this).serializeObject()));
+    });
+
+    </script>
+    
+</body>
+</html>

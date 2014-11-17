@@ -19,9 +19,15 @@
 		"http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"
 	];
 
-	$.require(url, true).done(function(){
-		$("#log").append("Backbone is installed");
+	$.require(url, false).done(function(){
+		if("Backbone" in window){
+			$("#log").append("Backbone is installed");
+		} else {
+			$("#log").append("Failed");
+		}
 	});
+
+
 
 	</script>
 	

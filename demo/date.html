@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>$.formatDate</title>
+</head>
+<body>
+
+    <h1>$.formatDate</h1>
+
+    <pre id="log"></pre>
+
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../src/toys.js"></script>
+
+    <script>
+    (function(){
+
+        var log = function(msg){
+            $("#log").append(msg + "\n");
+        };
+
+        log('> $.formatDate("2014/01/23 12:34:56", "[escaped] D mmm dd yyyy hh:MM:ss a")');
+        log("- " + $.formatDate("2014/01/23 12:34:56", "[escaped] D mmm dd yyyy hh:MM:ss a"));
+
+
+    }());
+    </script>
+    
+</body>
+</html>

@@ -52,6 +52,26 @@
 		// escapeRegExp
 		log("> $.escapeRegExp('^foo{bar}[baz]+$')");
 		log($.escapeRegExp('^foo{bar}[baz]+$'));
+		log("");
+
+		// formatNumber
+		log("> $.formatNumber(1234567890)");
+		log($.formatNumber(1234567890));
+		log("");
+
+		// zerofill
+		log("> $.zerofill(123, 5)");
+		log($.zerofill(123, 5));
+		log("");
+
+		// parseURL
+		log("> $.parseURL('http://www.example.com:8080/foo/bar/index.html?q=baz#hoge')");
+		(function(obj){
+			$.each(obj, function(key, value){
+				log($.format("- %s : %s", key, value));
+			});
+		}($.parseURL('http://www.example.com:8080/foo/bar/index.html?q=baz#hoge')));
+		log("");
 
 	}());
 

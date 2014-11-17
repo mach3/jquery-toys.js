@@ -6,7 +6,7 @@
      */
     $.extend($.support, {
         scriptAsync: document.createElement("script").async !== void 0,
-        scriptOnLoad: document.createElement("script").onload !== void 0
+        scriptOnLoad: document.createElement("script").onreadystatechange === void 0
     });
 
     /**
@@ -29,6 +29,64 @@
     };
 
     /**
+     * Apply attributes feature to object
+     *
+     * options:
+     * - defaults: Property name for default options
+     * - options: Property name for options 
+     * - eventType: Event type name for changing options
+     *
+     * @param {Object} obj
+     * @param {Object} options
+     */
+    $.applyConfig = function(obj, options){
+        var o = $.extend({
+            defaults: "defaults",
+            options: "options",
+            eventType: "change"
+        }, options);
+
+        obj[o.options] = obj[o.options] || {};
+        if(o.defaults in obj){
+            obj[o.options] = $.extend(true, obj[o.options], obj[o.defaults]);
+        }
+
+        obj.config = function(){
+            var type, args, options, my = this;
+
+            args = arguments;
+            type = $.type(args[0]);
+            options = this[o.options];
+
+            if(type === "string"){
+                if(args.length < 2){
+                    return options[args[0]];
+                }
+                if(options[args[0]] === args[1]){
+                    return this;
+                }
+                options[args[0]] = args[1];
+                if("trigger" in this && "on" in this){
+                    this.trigger(o.eventType, {key: args[0], value: args[1]});
+                }
+                return this;
+            }
+            else if(type === "object"){
+                $.each(args[0], function(key, value){
+                    my.config(key, value);
+                });
+                return this;
+            }
+            else if(type === "undefined"){
+                return options;
+            }
+            return this;
+        };
+        
+        return obj;
+    };
+
+    /**
      * Apply event feature to object
      * - `propName` is property name for jQuery object
      * @param {Object} obj
@@ -45,6 +103,7 @@
         });
         return obj;
     };
+
 
     /**
      * Escape HTML string
@@ -82,51 +141,123 @@
     };
 
     /**
-     * Include script by url(s), return Deferred object
-     * - pass sync `TRUE` to load synchronously
-     * @param {String|Array} url
-     * @param {Boolean} sync
+     * Values for formatDate
      */
-    $.require = function(url, sync){
-        var df, stack, count, process;
+    $.FORMAT_DATE_MONTHS = [
+        "Jan", "Feb", "Mar",
+        "Apr", "May", "Jun", 
+        "Jul", "Aug", "Sep", 
+        "Oct", "Nov", "Dec"
+    ];
+    $.FORMAT_DATE_MONTHS_FULL = [
+        "January", "February", "March",
+        "April", "May", "June",
+        "July", "August", "September",
+        "October", "November", "December"
+    ];
+    $.FORMAT_DATE_DAYS = [
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    ];
+    $.FORMAT_DATE_DAYS_FULL = [
+        "Sunday", "Monday", "Friday", "Wednesday",
+        "Thursday", "Friday", "Saturday"
+    ];
+    $.FORMAT_DATE_AMPM = [
+        "am",
+        "pm"
+    ];
 
-        df = $.Deferred();
-        url = ($.type(url) !== "array") ? [url] : url;
-        count = url.length;
-        $._scriptstack_ = $._scriptstack_ || {};
+    /**
+     * Format date string
+     * @param {Date} date
+     */
+    $.formatDate = function(date, template){
+        var vars, tokens, escaped;
 
-        stack = (function(){
-            var id = (new Date()).getTime();
-            $._scriptstack_[id] = [];
-            return $._scriptstack_[id];
-        }());
-
-        process = function(e){
-            if(e.type === "load" || this.readyState === "loaded"){
-                if(count -= 1){ return; }
-            }
-            !! stack.length && $.each(stack, function(i, node){
-                node.appendTo("head");
-            });
-            df.resolve();
+        date = (date instanceof Date) ? date : new Date(date);
+        escaped = [];
+        vars = {
+            y: date.getFullYear(),
+            m: date.getMonth(),
+            d: date.getDate(),
+            day: date.getDay(),
+            hour: date.getHours(),
+            min: date.getMinutes(),
+            sec: date.getSeconds()
         };
+        tokens = [
+            "[y]{2,4}",
+            "[m]{1,4}",
+            "[d]{1,2}",
+            "[h]{1,2}",
+            "[H]{1,2}",
+            "[M]{1,2}",
+            "[s]{1,2}",
+            "[D]{1,2}",
+            "[a]{1}"
+        ];
 
-        $.each(url, function(i, src){
-            var node = $("<script>");
-            node.on($.support.scriptOnLoad ? "load" : "readystatechange", process);
-            if(! sync){
-                node.prop("async", true).appendTo("head");
-            } else {
-                if($.support.scriptAsync){
-                    node.prop("async", false).appendTo("head");
-                } else {
-                    stack.push(node);
-                }
+        return template.replace(/\[([\s\S]+?)\]/g, function(token, e){
+            escaped.push(e);
+            return "%%%";
+        })
+        .replace(new RegExp($.format("(%s)", tokens.join("|")), "g"), function(token){
+            switch(token){
+                case "yyyy":
+                    return vars.y;
+                case "yy":
+                case "yyy":
+                    return vars.y.toString().substr(2);
+                case "mmm":
+                    return $.FORMAT_DATE_MONTHS[vars.m];
+                case "mmmm":
+                    return $.FORMAT_DATE_MONTHS_FULL[vars.m];
+                case "mm":
+                    return $.zerofill(vars.m + 1, 2);
+                case "m":
+                    return vars.m + 1;
+                case "dd":
+                    return $.zerofill(vars.d, 2);
+                case "d":
+                    return vars.d;
+                case "hh":
+                    return $.zerofill(vars.hour, 2);
+                case "h":
+                    return vars.hour;
+                case "HH":
+                    return $.zerofill(vars.hour % 12, 2);
+                case "H":
+                    return vars.hour % 12;
+                case "MM":
+                    return $.zerofill(vars.min, 2);
+                case "M":
+                    return vars.min;
+                case "ss":
+                    return $.zerofill(vars.sec, 2);
+                case "s":
+                    return vars.sec;
+                case "D":
+                    return $.FORMAT_DATE_DAYS[vars.day];
+                case "DD":
+                    return $.FORMAT_DATE_DAYS_FULL[vars.day];
+                case "a":
+                    return $.FORMAT_DATE_AMPM[vars.hour < 12 ? 0 : 1];
+                default: break;
             }
-            node.attr("src", src);
+            return "";
+        })
+        .replace(/%%%/g, function(){
+            return escaped.length ? escaped.shift() : "";
         });
+    };
 
-        return df.promise();
+    /**
+     * Separate number with comma
+     * @param {Number} num
+     */
+    $.formatNumber = function(num){
+        return num.toString()
+        .replace(/([0-9]+?)(?=(?:[0-9]{3})+$)/g , "$1,");
     };
 
     /**
@@ -137,8 +268,28 @@
     $.loadImage = function(src){
         var img = new Image(), df = $.Deferred();
         img.onload = function(){ df.resolve(this); };
+        img.onerror = function(){ df.reject(this); };
         img.src = src;
         return df.promise();
+    };
+
+    /**
+     * Parse url string, return location-like object
+     * @param {String} url
+     */
+    $.parseURL = function(url){
+        var el = document.createElement("a");
+        el.href = url;
+        return {
+            hash: el.hash,
+            host: el.host,
+            hostname: el.hostname,
+            href: el.href,
+            origin: el.origin,
+            pathname: el.pathname,
+            port: el.port,
+            protocol: el.protocol
+        };
     };
 
     /**
@@ -210,6 +361,38 @@
     };
 
     /**
+     * Include script by url(s), return Deferred object
+     * - if async is `FALSE`, try to load synchronously (only for browser which supports scriptElement.async)
+     * - async is `FALSE` as default
+     * @param {String|Array} url
+     * @param {Boolean} sync
+     */
+    $.require = function(url, async){
+        var df, stack, count, process;
+
+        df = $.Deferred();
+        url = ($.type(url) !== "array") ? [url] : url;
+        count = url.length;
+        async = async || false;
+
+        process = function(e){
+            if((!! e && e.type === "load") || this.readyState === "loaded"){
+                if(count -= 1){ return; }
+                df.resolve();
+            }
+        };
+
+        $.each(url, function(i, src){
+            var node = $("<script>")
+            .on($.support.scriptOnLoad ? "load" : "readystatechange", process)
+            .prop("async", async).appendTo("body");
+            node.attr("src", src);
+        });
+
+        return df.promise();
+    };
+
+    /**
      * Scroll to element's position with animation
      * @param {String} selector
      * @param {Number} duration
@@ -233,6 +416,20 @@
      */
     $.times = function(count, callback){
         for(var i=0; i<count; i+=1){ callback(i); }
+    };
+    
+    /**
+     * Zero-fill number
+     * @param {Number} num
+     * @param {Integer} length
+     */
+    $.zerofill = function(num, length){
+        var count;
+        num = num.toString();
+        if(count = length - num.length){
+            while(count--){ num = "0" + num; }
+        }
+        return num;
     };
 
 

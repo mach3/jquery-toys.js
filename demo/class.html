@@ -27,10 +27,16 @@
 		(function(){
 			var api = Foo.prototype;
 
+			api.defaults = {
+				name: "John",
+				age: 23,
+				email: "john@example.com"
+			};
+
 			api.init = function(){
 				var my = this;
 
-				log("> applyEVents");
+				log("> applyEvents");
 
 				$.applyEvents(this);
 				$.each(["on", "off", "trigger"], function(i, name){
@@ -38,20 +44,38 @@
 						log($.format("- %s() is implemented", name));
 					}
 				});
+				log("");
 
+				log("> applyConfig");
+				$.applyConfig(this);
+				if($.isFunction(this.config)){
+					log($.format("- config() is implemented"));
+				}
+				log("");
+
+
+				log("> configure");
+				this.on("change", this.onChange);
+				this.config("name", "Tom");
+				this.config({
+					age: 32,
+					email: "tom@example.com"
+				});
 				log("");
 
 				log("> rebase");
-				$.rebase(this, /^on[A-Z]/);
-				this.on("test", this.onTest);
-				this.trigger("test");
-
+				$.rebase(this, ["test"]);
+				setTimeout(this.test, 10);
 			};
 
-			api.onTest = function(){
+			api.test = function(){
 				if(this instanceof Foo){
-					log("- `this` in onTest() is instance of Foo");
+					log("- `this` in test() is instance of Foo");
 				}
+			};
+
+			api.onChange = function(e, o){
+				log($.format("- '%s' has been changed to '%s'", o.key, o.value));
 			};
 
 		}());
